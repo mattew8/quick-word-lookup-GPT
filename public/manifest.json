@@ -1,0 +1,19 @@
+{
+  "name": "QuickWordLookupGPT",
+  "description": "Easily search for English words without switching tabs!",
+  "manifest_version": 3,
+  "version": "1.0.0",
+  "permissions": ["sidePanel", "storage", "tabs"],
+  "background": {
+    "service_worker": "src/app/service-worker/index.js"
+  },
+  "side_panel": {
+    "default_path": "src/app/side-panel/index.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/app/content-scripts/index.js"]
+    }
+  ]
+}
