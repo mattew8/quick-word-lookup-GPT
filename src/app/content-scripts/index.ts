@@ -1,4 +1,4 @@
-function findTextAreaAndAddEvent() {
+function initiallize() {
   const CHAT_GPT_URL = 'https://chatgpt.com';
 
   const url = new URL(window.location.href);
@@ -19,4 +19,4 @@ function findTextAreaAndAddEvent() {
   });
 }
 
-findTextAreaAndAddEvent();
+initiallize();
