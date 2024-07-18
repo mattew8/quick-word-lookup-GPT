@@ -18,6 +18,10 @@ const SearchWord = () => {
     }
   };
 
+  const dict = parseTextToObjects(answer);
+
+  const copyWord = (text: string) => console.log(text);
+
   return (
     <div>
       <h1>단어를 검색해보세요</h1>
@@ -25,9 +29,34 @@ const SearchWord = () => {
         <input placeholder="search words!" name="search-input" />
         <button>검색</button>
       </form>
-      {answer && <p>{answer}</p>}
+      {dict.length > 0 &&
+        dict.map(({ word, example }) => (
+          <>
+            <p onClick={() => copyWord(word)}>{word}</p>
+            <p>{example}</p>
+          </>
+        ))}
     </div>
   );
 };
 
 export default SearchWord;
+
+// `Imagine
+// Example: 'She likes to imagine different worlds.'
+
+// Fantasize
+// Example: 'He likes to fantasize about winning the lottery.'
+// `;
+function parseTextToObjects(text: string) {
+  // seperate text and example
+  const parts = text.trim().split('\n\n');
+
+  // convert to array
+  const result = parts.map((part) => {
+    const [word, example] = part.split('\n');
+    return { word: word, example: example };
+  });
+
+  return result;
+}
