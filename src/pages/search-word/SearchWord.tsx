@@ -14,6 +14,7 @@ const SearchWord = () => {
       if (message === null) return;
       setAnswer(message);
     } catch (e) {
+      if (e instanceof Error) setAnswer(e.message);
       console.error(e);
     }
   };

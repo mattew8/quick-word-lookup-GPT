@@ -14,7 +14,11 @@ export async function generateText(text: string) {
     model: 'gpt-3.5-turbo',
   });
 
-  return completion.choices[0]?.message?.content;
+  const answer = completion.choices[0]?.message?.content;
+  if (answer === 'ERROR') {
+    throw new Error('존재하지 않는 단어입니다!');
+  }
+  return answer;
 }
 
 const translateCompletionMessages: ChatCompletionMessageParam[] = [
