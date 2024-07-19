@@ -20,7 +20,11 @@ const SearchWord = () => {
 
   const dict = parseTextToObjects(answer);
 
-  const copyWord = (text: string) => console.log(text);
+  const copyWord = (text: string) =>
+    chrome.runtime.sendMessage({
+      action: 'paste-text',
+      payload: text,
+    });
 
   return (
     <div>
