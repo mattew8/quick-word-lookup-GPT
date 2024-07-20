@@ -108,8 +108,10 @@ function parseTextToObjects(text: string) {
   // convert to array
   const result = parts.map((part) => {
     const [word, example] = part.split('\n');
-    return { word: word, example: example };
+    return { word: word, example: removeGptExamplePrefix(example) };
   });
 
   return result;
 }
+
+const removeGptExamplePrefix = (text: string) => text.replace(/^Example: /, '');
