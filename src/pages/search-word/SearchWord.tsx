@@ -1,11 +1,28 @@
 import { generateText } from '@/shared/translate/translator';
+import {
+  CheckIcon,
+  CopyIcon,
+  MagnifyingGlassIcon,
+} from '@radix-ui/react-icons';
+import {
+  Blockquote,
+  Button,
+  Flex,
+  IconButton,
+  Spinner,
+  TextField,
+  Text,
+} from '@radix-ui/themes';
 import { FormEventHandler, useState } from 'react';
 
 const SearchWord = () => {
   const [answer, setAnswer] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+
     const formData = new FormData(e.currentTarget);
     const fieldValue = Object.fromEntries(formData.entries())['search-input'];
 
@@ -16,46 +33,77 @@ const SearchWord = () => {
     } catch (e) {
       if (e instanceof Error) setAnswer(e.message);
       console.error(e);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const dict = parseTextToObjects(answer);
 
-  const copyWord = (text: string) =>
-    chrome.runtime.sendMessage({
-      action: 'paste-text',
-      payload: text,
-    });
-
   return (
-    <div>
-      <h1>단어를 검색해보세요</h1>
-      <form onSubmit={onSubmit}>
-        <input placeholder="search words!" name="search-input" />
-        <button>검색</button>
-      </form>
-      {dict.length > 0 &&
-        dict.map(({ word, example }) => (
-          <>
-            <p onClick={() => copyWord(word)}>{word}</p>
-            <p>{example}</p>
-          </>
-        ))}
-    </div>
+    <>
+      <Flex asChild>
+        <form onSubmit={onSubmit}>
+          <TextField.Root
+            size={'1'}
+            placeholder={'Search words!'}
+            name={'search-input'}
+          />
+          <Button size={'1'} variant={'soft'}>
+            {isLoading ? <Spinner loading /> : <MagnifyingGlassIcon />}
+          </Button>
+        </form>
+      </Flex>
+
+      {dict !== null && dict.length > 0 && (
+        <Flex direction={'column'} gap={'8px'} mt={'16px'}>
+          {dict.map(({ word, example }) => (
+            <div>
+              <CopyAndCheck word={word} />
+              <Blockquote mt={'4px'} color={'gray'} size={'2'}>
+                {example}
+              </Blockquote>
+            </div>
+          ))}
+        </Flex>
+      )}
+    </>
   );
 };
 
 export default SearchWord;
 
-// `Imagine
-// Example: 'She likes to imagine different worlds.'
+const CopyAndCheck = ({ word }: { word: string }) => {
+  const [isClicked, setIsClicked] = useState(false);
+  const copyWord = () => {
+    setIsClicked(true);
+    chrome.runtime.sendMessage({
+      action: 'paste-text',
+      payload: word,
+    });
+  };
+  return (
+    <Flex align={'center'} gap={'12px'}>
+      <Text size={'2'} weight={'bold'}>
+        {word}
+      </Text>
+      {isClicked ? (
+        <CheckIcon />
+      ) : (
+        <IconButton onClick={copyWord} size={'1'}>
+          <CopyIcon />
+        </IconButton>
+      )}
+    </Flex>
+  );
+};
 
-// Fantasize
-// Example: 'He likes to fantasize about winning the lottery.'
-// `;
 function parseTextToObjects(text: string) {
+  if (text.length === 0) return null;
+
   // seperate text and example
   const parts = text.trim().split('\n\n');
+  if (parts.length === 0) return null;
 
   // convert to array
   const result = parts.map((part) => {
