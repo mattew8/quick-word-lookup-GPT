@@ -12,12 +12,9 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        'service-worker': resolve(__dirname, 'src/app/service-worker/index.ts'),
-        'side-panel': resolve(__dirname, 'src/app/side-panel/index.html'),
-        'content-scripts': resolve(
-          __dirname,
-          'src/app/content-scripts/index.ts',
-        ),
+        'service-worker': resolve(__dirname, 'src/app/service-worker.ts'),
+        'side-panel': resolve(__dirname, 'src/app/side-panel.html'),
+        'content-scripts': resolve(__dirname, 'src/app/content-scripts.ts'),
       },
       output: {
         entryFileNames: (chunkInfo) => {
@@ -25,7 +22,7 @@ export default defineConfig({
             chunkInfo.name === 'service-worker' ||
             chunkInfo.name === 'content-scripts'
           ) {
-            return 'src/app/[name]/index.js';
+            return `src/app/[name].js`;
           }
           return 'assets/[name].[hash].js'; // Default for other entries
         },

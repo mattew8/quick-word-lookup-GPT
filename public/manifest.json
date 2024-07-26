@@ -5,15 +5,15 @@
   "version": "1.0.0",
   "permissions": ["sidePanel", "storage", "tabs"],
   "background": {
-    "service_worker": "src/app/service-worker/index.js"
+    "service_worker": "src/app/service-worker.js"
   },
   "side_panel": {
-    "default_path": "src/app/side-panel/index.html"
+    "default_path": "src/app/side-panel.html"
   },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["src/app/content-scripts/index.js"]
+      "js": ["src/app/content-scripts.js"]
     }
   ]
 }
