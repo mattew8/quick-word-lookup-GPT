@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import {
   ChatCompletion,
   ChatCompletionMessageParam,
-} from 'openai/src/resources/index.js';
+} from 'openai/resources/index.mjs';
 
 export interface OpenAIClient {
   chatCompletionsCreate(params: {

@@ -1,24 +1,32 @@
-import OpenAI from 'openai';
+// shared/translationModel.ts
+import { OpenAIClient } from './open-ai';
 import { ChatCompletionMessageParam } from 'openai/resources/index.mjs';
 
-const apiKey = import.meta.env.VITE_API_KEY;
+export class TranslationModel {
+  private openAIClient: OpenAIClient;
 
-const openai = new OpenAI({
-  apiKey: apiKey,
-  dangerouslyAllowBrowser: true,
-});
-
-export async function generateText(text: string) {
-  const completion = await openai.chat.completions.create({
-    messages: [...translateCompletionMessages, { role: 'user', content: text }],
-    model: 'gpt-3.5-turbo',
-  });
-
-  const answer = completion.choices[0]?.message?.content;
-  if (answer === 'ERROR') {
-    throw new Error('존재하지 않는 단어입니다!');
+  constructor(openAIClient: OpenAIClient) {
+    this.openAIClient = openAIClient;
   }
-  return answer;
+
+  async translate(text: string): Promise<string> {
+    const completion = await this.openAIClient.chatCompletionsCreate({
+      messages: [
+        ...translateCompletionMessages,
+        { role: 'user', content: text },
+      ],
+      model: 'gpt-3.5-turbo',
+    });
+
+    const answer = completion.choices[0]?.message?.content;
+    if (answer === 'ERROR') {
+      throw new Error('존재하지 않는 단어입니다!');
+    }
+    if (answer === null || answer === undefined || answer.length === 0) {
+      throw new Error('검색 결과가 없습니다!');
+    }
+    return answer;
+  }
 }
 
 const translateCompletionMessages: ChatCompletionMessageParam[] = [
