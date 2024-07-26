@@ -1,2 +1,2 @@
 export * from './model';
-export * from './service';
+export { default as SearchWordForm } from './ui/SearchWordForm';
